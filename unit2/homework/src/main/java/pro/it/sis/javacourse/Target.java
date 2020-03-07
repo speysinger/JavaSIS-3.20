@@ -1,18 +1,10 @@
 package pro.it.sis.javacourse;
+import lombok.Getter;
+import lombok.Setter;
 
-public class Target {
-
-    public int getPhysicalDamage() {
-        return physicalDamage;
-    }
-
-    public int getFireDamage() {
-        return fireDamage;
-    }
-
-    public int getIceDamage() {
-        return iceDamage;
-    }
+@Getter
+@Setter
+abstract public class Target {
 
     private int physicalDamage;
 

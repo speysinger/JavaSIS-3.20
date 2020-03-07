@@ -2,8 +2,6 @@ package pro.it.sis.javacourse;
 
 import org.junit.Test;
 
-import java.nio.file.Watchable;
-
 import static org.junit.Assert.*;
 
 public class WeaponTest {
@@ -11,30 +9,55 @@ public class WeaponTest {
     @Test
     public void testPhysicalDamage() {
 
-        Target t = new Target();
-        Weapon w = new Weapon();
+        Target iceGiant = new IceGiant();
+        Weapon flamingAsphalt = new FlamingAsphalt();
+        flamingAsphalt.hit(iceGiant);
+
+        assertEquals(100, iceGiant.getPhysicalDamage());
+
+        Weapon swordOfNight = new SwordOfNight();
+        swordOfNight.hit(iceGiant);
+
+        assertEquals(100, iceGiant.getPhysicalDamage());
+    }
+
+    @Test
+    public void testFireResist() {
+
+        Target t = new Efreet();
+        Weapon w = new FlamingAsphalt();
         w.hit(t);
 
-        assertEquals(100, t.getPhysicalDamage());
+        assertEquals(0, t.getFireDamage());
+    }
+
+    @Test
+    public void testIceResist() {
+
+        Target t = new IceGiant();
+        Weapon w = new SwordOfNight();
+        w.hit(t);
+
+        assertEquals(0, t.getIceDamage());
     }
 
     @Test
     public void testFireDamage() {
 
-        Target t = new Target();
-        Weapon w = new Weapon();
+        Target t = new IceGiant();
+        Weapon w = new FlamingAsphalt();
         w.hit(t);
 
-        assertEquals(100, t.getFireDamage());
+        assertEquals(50, t.getFireDamage());
     }
 
     @Test
     public void testIceDamage() {
 
-        Target t = new Target();
-        Weapon w = new Weapon();
+        Target t = new Efreet();
+        Weapon w = new SwordOfNight();
         w.hit(t);
 
-        assertEquals(100, t.getIceDamage());
+        assertEquals(50, t.getIceDamage());
     }
 }
