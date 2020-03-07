@@ -14,6 +14,7 @@ public class SwordOfNight extends Weapon {
     public void hit(Target target)
     {
         target.setPhysicalDamage(physicalDamage);
+        target.setFireDamage(fireDamage);
         target.setIceDamage(iceDamage);
     }
 
