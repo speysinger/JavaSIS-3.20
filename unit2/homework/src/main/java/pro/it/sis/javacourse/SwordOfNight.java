@@ -13,9 +13,9 @@ public class SwordOfNight extends Weapon {
     @Override
     public void hit(Target target)
     {
-        target.setPhysicalDamage(physicalDamage);
-        target.setFireDamage(fireDamage);
-        target.setIceDamage(iceDamage);
+        target.setPhysicalDamage(getPhysicalDamage());
+        target.setFireDamage(getFireDamage());
+        target.setIceDamage(getIceDamage());
     }
 
 }

@@ -15,49 +15,68 @@ public class WeaponTest {
 
         assertEquals(100, iceGiant.getPhysicalDamage());
 
+        Target efreet = new Efreet();
+        Weapon swordOfNight = new SwordOfNight();
+        swordOfNight.hit(efreet);
+
+        assertEquals(100, efreet.getPhysicalDamage());
+    }
+
+    @Test
+    public void testDamageAccumulation() {
+
+        Target iceGiant = new IceGiant();
+        Weapon flamingAsphalt = new FlamingAsphalt();
+        flamingAsphalt.hit(iceGiant);
+
+        assertEquals(100, iceGiant.getPhysicalDamage());
+
         Weapon swordOfNight = new SwordOfNight();
         swordOfNight.hit(iceGiant);
 
-        assertEquals(100, iceGiant.getPhysicalDamage());
+        int expectedPhysicalDamage = flamingAsphalt.getPhysicalDamage() + swordOfNight.getPhysicalDamage();
+
+        assertEquals(expectedPhysicalDamage, iceGiant.getPhysicalDamage());
+
     }
 
     @Test
     public void testFireResist() {
 
-        Target t = new Efreet();
-        Weapon w = new FlamingAsphalt();
-        w.hit(t);
+        Target efreet = new Efreet();
+        Weapon flamingAsphalt = new FlamingAsphalt();
+        flamingAsphalt.hit(efreet);
 
-        assertEquals(0, t.getFireDamage());
+        assertEquals(0, efreet.getFireDamage());
     }
 
     @Test
     public void testIceResist() {
 
-        Target t = new IceGiant();
-        Weapon w = new SwordOfNight();
-        w.hit(t);
+        Target iceGiant = new IceGiant();
+        Weapon swordOfNight = new SwordOfNight();
+        swordOfNight.hit(iceGiant);
 
-        assertEquals(0, t.getIceDamage());
+        assertEquals(0, iceGiant.getIceDamage());
     }
 
     @Test
     public void testFireDamage() {
 
-        Target t = new IceGiant();
-        Weapon w = new FlamingAsphalt();
-        w.hit(t);
+        Target iceGiant = new IceGiant();
+        Weapon flamingAsphalt = new FlamingAsphalt();
+        flamingAsphalt.hit(iceGiant);
 
-        assertEquals(50, t.getFireDamage());
+        assertEquals(50, iceGiant.getFireDamage());
     }
 
     @Test
     public void testIceDamage() {
 
-        Target t = new Efreet();
-        Weapon w = new SwordOfNight();
-        w.hit(t);
+        Target efreet = new Efreet();
+        Weapon swordOfNight = new SwordOfNight();
+        swordOfNight.hit(efreet);
 
-        assertEquals(50, t.getIceDamage());
+        assertEquals(50, efreet.getIceDamage());
     }
 }

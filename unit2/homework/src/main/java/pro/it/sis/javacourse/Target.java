@@ -1,14 +1,27 @@
 package pro.it.sis.javacourse;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 abstract public class Target {
 
-    private int physicalDamage;
+    public void setPhysicalDamage(int physicalDamageTaken)
+    {
+        physicalDamage += physicalDamageTaken;
+    }
 
-    private int fireDamage;
+    public void setFireDamage(int fireDamageTaken)
+    {
+        fireDamage += fireDamageTaken;
+    }
 
-    private int iceDamage;
+    public void setIceDamage(int iceDamageTaken)
+    {
+        iceDamage += iceDamageTaken;
+    }
+
+    private int physicalDamage = 0;
+
+    private int fireDamage = 0;
+
+    private int iceDamage = 0;
 }

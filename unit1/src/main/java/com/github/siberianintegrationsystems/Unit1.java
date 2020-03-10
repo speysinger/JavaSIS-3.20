@@ -26,8 +26,9 @@ public class Unit1 {
         char[] inputString = INPUT_STRING.toCharArray();
         int stringLength = inputString.length;
 
-        for(int index = 0; index < stringLength/2; index++)
-            swap(index, (stringLength-index-1), inputString);
+        for(int index = 0; index < stringLength/2; index++) {
+            swap(index, (stringLength - index - 1), inputString);
+        }
 
         return String.valueOf(inputString);
     }

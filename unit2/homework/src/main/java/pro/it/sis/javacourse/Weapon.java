@@ -1,14 +1,20 @@
 package pro.it.sis.javacourse;
 
-import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Setter;
 
 abstract public class Weapon {
     abstract void hit(Target target);
 
-    @Setter(AccessLevel.PROTECTED) protected int physicalDamage;
+    @Getter
+    @Setter
+    private int physicalDamage;
 
-    @Setter(AccessLevel.PROTECTED) protected int fireDamage;
+    @Getter
+    @Setter
+    private int fireDamage;
 
-    @Setter(AccessLevel.PROTECTED) protected int iceDamage;
+    @Getter
+    @Setter
+    private int iceDamage;
 }
