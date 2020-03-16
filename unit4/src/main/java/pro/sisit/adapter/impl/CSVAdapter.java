@@ -5,9 +5,10 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
+import pro.sisit.adapter.CSVAdopted;
 import pro.sisit.adapter.IOAdapter;
 
-public class CSVAdapter<T> implements IOAdapter<T> {
+public class CSVAdapter<T extends CSVAdopted> implements IOAdapter<T> {
 
     private Class<T> entityType;
     private BufferedReader reader;
@@ -60,15 +61,16 @@ public class CSVAdapter<T> implements IOAdapter<T> {
 
     @Override
     public T read(int index) {
-        String lineByIndex = getLineAtIndex(index);
+        String lineAtIndex = getLineAtIndex(index);
 
-        if (lineByIndex.length() == 0) {
-            throw new RuntimeException("Недопустимый индекс");
+        if (lineAtIndex.length() == 0) {
+            throw new RuntimeException("РќРµРґРѕРїСѓСЃС‚РёРјС‹Р№ РёРЅРґРµРєСЃ");
         }
 
         T entity = null;
         try {
-            entity = entityType.getDeclaredConstructor(String.class).newInstance(lineByIndex);
+            entity = entityType.getDeclaredConstructor().newInstance();
+            entity.setCSVObject(lineAtIndex);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                 NoSuchMethodException e) {
             e.printStackTrace();
@@ -79,10 +81,10 @@ public class CSVAdapter<T> implements IOAdapter<T> {
     @Override
     public int append(T entity) {
         if (entity.getClass() != entityType) {
-            throw new RuntimeException("Недопустимый параметр");
+            throw new RuntimeException("РќРµРґРѕРїСѓСЃС‚РёРјС‹Р№ РїР°СЂР°РјРµС‚СЂ");
         }
         try {
-            String entityString = entity.toString();
+            String entityString = entity.getCSVLine();
             if (lineCount() != 0)
                 writer.newLine();
 

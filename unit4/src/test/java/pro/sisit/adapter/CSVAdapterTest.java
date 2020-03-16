@@ -25,7 +25,6 @@ import pro.sisit.model.Book;
  */
 
 public class CSVAdapterTest {
-
     @Before
     public void createFile() throws IOException {
 
@@ -155,7 +154,6 @@ public class CSVAdapterTest {
         Book actualBook2 = bookCSVAdapterWrapper.read(1);
         assertEquals(actualBook2, expectedBook2);
     }
-
 
     @Test
     public void testReadAuthor() throws IOException {

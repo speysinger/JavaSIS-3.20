@@ -1,21 +1,17 @@
 package pro.sisit.model;
 
 import lombok.Getter;
+import pro.sisit.adapter.CSVAdopted;
 
 import java.util.Objects;
 
 @Getter
-public class Author {
+public class Author implements CSVAdopted {
 
     private String name;
     private String birthPlace;
 
-    public Author(String data) {
-        String[] values = data.split(",");
-
-        this.name = values[0];
-        this.birthPlace = values[1];
-    }
+    public Author(){}
 
     public Author(String name, String birthPlace) {
         this.name = name;
@@ -36,12 +32,20 @@ public class Author {
     }
 
     @Override
-    public String toString() {
+    public int hashCode() {
+        return Objects.hash(getName(), getBirthPlace());
+    }
+
+    @Override
+    public String getCSVLine() {
         return (name + "," + birthPlace);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(getName(), getBirthPlace());
+    public void setCSVObject(String data) {
+        String[] values = data.split(",");
+
+        this.name = values[0];
+        this.birthPlace = values[1];
     }
 }
