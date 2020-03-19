@@ -17,35 +17,45 @@ public class PathFinder {
      */
     public Transport getOptimalTransport(DeliveryTask deliveryTask, List<Transport> transports) {
 
-        if(deliveryTask == null || transports == null)
+        if (deliveryTask == null || transports == null)
             return null;
 
-        Optional<Transport> optimalTransport =
-                transports.stream().filter(haveSameVolume(deliveryTask).and(haveSameRouteType(deliveryTask))).
-                min(Comparator.comparing(transport -> transport.getPrice().multiply(
-                        getRouteLength(transport, deliveryTask))));
+        Optional<Transport> optimalTransport = transports
+                        .stream()
+                        .filter(haveSameVolume(deliveryTask).and(haveSameRouteType(deliveryTask)))
+                        .min(Comparator.comparing(
+                                transport -> getDeliveryPrice(transport, deliveryTask)));
 
         return optimalTransport.orElse(null);
     }
 
-    public static BigDecimal getRouteLength(Transport transport, DeliveryTask deliveryTask)
-    {
-        return deliveryTask.getRoutes().stream().filter(isEqualRoute(transport)).findFirst().get().getLength();
+    public static BigDecimal getDeliveryPrice(Transport transport, DeliveryTask deliveryTask) {
+        return deliveryTask.getRoutes()
+                .stream()
+                .filter(isEqualRoute(transport))
+                .findFirst()
+                .map(route -> route
+                        .getLength()
+                        .multiply(transport.getPrice()))
+                .orElse( null);
     }
 
-    public static Predicate<Transport> haveSameVolume(DeliveryTask deliveryTask)
-    {
-        return transport -> transport.getVolume().compareTo(deliveryTask.getVolume()) >= 0;
+    public static Predicate<Transport> haveSameVolume(DeliveryTask deliveryTask) {
+        return transport -> transport
+                .getVolume()
+                .compareTo(deliveryTask.getVolume()) >= 0;
     }
 
-    public static Predicate<Transport> haveSameRouteType(DeliveryTask deliveryTask)
-    {
-        return transport -> (deliveryTask.getRoutes().stream().anyMatch(isEqualRoute(transport)));
+    public static Predicate<Transport> haveSameRouteType(DeliveryTask deliveryTask) {
+        return transport -> (deliveryTask
+                .getRoutes()
+                .stream()
+                .anyMatch(isEqualRoute(transport)));
     }
 
-    public static Predicate<Route> isEqualRoute(Transport transport)
-    {
-        return route -> route.getType().equals(transport.getType());
+    public static Predicate<Route> isEqualRoute(Transport transport) {
+        return route -> route
+                .getType()
+                .equals(transport.getType());
     }
-
 }

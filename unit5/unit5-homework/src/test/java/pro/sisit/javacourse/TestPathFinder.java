@@ -7,7 +7,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import pro.sisit.javacourse.PathFinder;
 import pro.sisit.javacourse.optimal.DeliveryTask;
 import pro.sisit.javacourse.optimal.Transport;
 
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static pro.sisit.javacourse.TestData.*;
-
 
 public class TestPathFinder {
 
@@ -39,6 +37,14 @@ public class TestPathFinder {
     public void testNullTransports() {
         PathFinder pathFinder = getPathFinder();
         Transport optimalTransport = pathFinder.getOptimalTransport(KingKongDelivery, null);
+        Assertions.assertNull(optimalTransport);
+    }
+
+    @Test
+    public void noSameRoute() {
+        PathFinder pathFinder = getPathFinder();
+        List<Transport> transports = Arrays.asList(BelAZ, Train);
+        Transport optimalTransport = pathFinder.getOptimalTransport(KingKongDelivery, transports);
         Assertions.assertNull(optimalTransport);
     }
 
