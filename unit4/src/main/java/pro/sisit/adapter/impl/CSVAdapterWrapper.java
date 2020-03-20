@@ -1,11 +1,11 @@
 package pro.sisit.adapter.impl;
 
-import pro.sisit.adapter.CSVAdopted;
 import pro.sisit.adapter.IOAdapter;
+import pro.sisit.adapter.ObjectConverter;
 
 import java.io.IOException;
 
-public class CSVAdapterWrapper<T extends CSVAdopted> implements IOAdapter<T> {
+public class CSVAdapterWrapper<T extends ObjectConverter> implements IOAdapter<T> {
     private CSVAdapter<T> csvAdapter;
 
     public CSVAdapterWrapper(CSVAdapter<T> csvAdapter) {

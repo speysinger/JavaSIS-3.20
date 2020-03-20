@@ -1,13 +1,14 @@
 package pro.sisit.model;
 
 import lombok.Getter;
-import pro.sisit.adapter.CSVAdopted;
+import pro.sisit.adapter.ObjectConverter;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
-public class Book implements CSVAdopted {
-
+public class Book implements ObjectConverter {
     private String name;
     private String author;
     private String genre;
@@ -43,17 +44,18 @@ public class Book implements CSVAdopted {
     }
 
     @Override
-    public String getCSVLine() {
-        return (name + "," + author + "," + genre + "," + isbn);
+    public List<String> getListOfFields() {
+        return Arrays.asList(this.name,
+                this.author,
+                this.genre,
+                this.isbn);
     }
 
     @Override
-    public void setCSVObject(String data) {
-        String[] values = data.split(",");
-
-        this.name = values[0];
-        this.author = values[1];
-        this.genre = values[2];
-        this.isbn = values[3];
+    public void initializeObject(List<String> fields) {
+        this.name = fields.get(0);
+        this.author = fields.get(1);
+        this.genre = fields.get(2);
+        this.isbn = fields.get(3);
     }
 }

@@ -1,19 +1,22 @@
 package pro.sisit.model;
 
 import lombok.Getter;
-import pro.sisit.adapter.CSVAdopted;
+import pro.sisit.adapter.ObjectConverter;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
-public class Animal implements CSVAdopted{
+public class Animal implements ObjectConverter {
 
     private String name;
     private String kindOfAnimal;
     private String birthPlace;
     private String dailySleep;
 
-    public Animal(){}
+    public Animal() {
+    }
 
     public Animal(String name, String kindOfAnimal, String birthPlace, String dailySleep) {
         this.name = name;
@@ -43,17 +46,18 @@ public class Animal implements CSVAdopted{
     }
 
     @Override
-    public String getCSVLine() {
-        return (name + "," + kindOfAnimal + "," + birthPlace + "," + dailySleep);
+    public List<String> getListOfFields() {
+        return Arrays.asList(this.name,
+                this.kindOfAnimal,
+                this.birthPlace,
+                this.dailySleep);
     }
 
     @Override
-    public void setCSVObject(String data) {
-        String[] values = data.split(",");
-
-        this.name = values[0];
-        this.kindOfAnimal = values[1];
-        this.birthPlace = values[2];
-        this.dailySleep = values[3];
+    public void initializeObject(List<String> fields) {
+        this.name = fields.get(0);
+        this.kindOfAnimal = fields.get(1);
+        this.birthPlace = fields.get(2);
+        this.dailySleep = fields.get(3);
     }
 }
