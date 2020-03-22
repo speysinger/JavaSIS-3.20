@@ -206,4 +206,21 @@ public class BigDecimalRange {
     public static BigDecimalRange infinityRange() {
         return new BigDecimalRange(null, true, null, true);
     }
+
+    public boolean isValueInRange(BigDecimal deliveryPrice) {
+        boolean result = true;
+        if (!isLeftOpen()) {
+            if (isLeftStrict)
+                result = left.compareTo(deliveryPrice) < 0;
+            else
+                result = left.compareTo(deliveryPrice) <= 0;
+        }
+        if (!isRightOpen & result) {
+            if (isRightStrict)
+                result = right.compareTo(deliveryPrice) > 0;
+            else
+                result = right.compareTo(deliveryPrice) >= 0;
+        }
+        return result;
+    }
 }
