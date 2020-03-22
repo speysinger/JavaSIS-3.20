@@ -1,10 +1,18 @@
 package pro.sisit.javacourse;
 
+import pro.sisit.javacourse.inverse.BigDecimalRange;
 import pro.sisit.javacourse.inverse.InverseDeliveryTask;
 import pro.sisit.javacourse.inverse.Solution;
+import pro.sisit.javacourse.optimal.DeliveryTask;
+import pro.sisit.javacourse.optimal.Route;
+import pro.sisit.javacourse.optimal.Transport;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class InversePathFinder {
 
@@ -24,7 +32,80 @@ public class InversePathFinder {
      * то функция должна вернуть пустой список доступных решений.
      */
     public List<Solution> getAllSolutions(InverseDeliveryTask task) {
-        // ToDo: realize me!
-        return new ArrayList<>();
+
+        Optional<InverseDeliveryTask> inverseTask = Optional.ofNullable(task);
+
+        if (!inverseTask.isPresent()) {
+            return new ArrayList<>();
+        }
+
+        Optional<List<Transport>> transports = Optional.ofNullable(task.getTransports());
+        Optional<List<DeliveryTask>> tasks = Optional.ofNullable(task.getTasks());
+        Optional<BigDecimalRange> priceRange = Optional.ofNullable(task.getPriceRange());
+
+        if (!transports.isPresent() | !tasks.isPresent() | !priceRange.isPresent()) {
+            return new ArrayList<>();
+        }
+
+        Optional<List<Solution>> solutions = tasks.get()
+                .stream()
+                .map(deliveryTask -> deliveryTask
+                        .getRoutes().stream()
+                        .map(route -> transports
+                                .get()
+                                .stream()
+                                .filter(sameRouteType(route)
+                                        .and(isPriceInRange(route, priceRange.get())
+                                                .and(haveSameVolume(deliveryTask)
+                                                )
+                                        )
+                                )
+                                .map(transport -> getSolution(deliveryTask, transport, route))
+                                .reduce(Optional.of(new ArrayList<>()), accumulator, combiner)
+                        )
+                        .reduce(Optional.of(new ArrayList<>()), combiner)
+                ).reduce(Optional.of(new ArrayList<>()), combiner);
+
+        return solutions.orElse(new ArrayList<>())
+                .stream()
+                .sorted(Comparator
+                        .comparing(Solution::getPrice).reversed()
+                        .thenComparing(solution -> solution
+                                .getDeliveryTask()
+                                .getName()))
+                .collect(Collectors.toList());
+    }
+
+
+    public static Predicate<Transport> haveSameVolume(DeliveryTask deliveryTask) {
+        return transport -> transport.getVolume().compareTo(deliveryTask.getVolume()) >= 0;
+    }
+
+    BiFunction<Optional<List<Solution>>, Solution, Optional<List<Solution>>> accumulator = (solutionsList, solution) -> {
+        solutionsList.ifPresent(solutions -> solutions.add(solution));
+        return solutionsList;
+    };
+
+    BinaryOperator<Optional<List<Solution>>> combiner = (baseSolutions, addedSolutions) -> {
+        baseSolutions.ifPresent(solutions -> solutions.addAll(addedSolutions.orElse(Collections.emptyList())));
+        return baseSolutions;
+    };
+
+    public static Solution getSolution(DeliveryTask deliveryTask, Transport transport, Route route) {
+        return new Solution(deliveryTask, transport, getDeliveryPrice(transport, route));
+    }
+
+    public static Predicate<Transport> sameRouteType(Route route) {
+        return transport -> transport.getType() == route.getType();
+    }
+
+    public static BigDecimal getDeliveryPrice(Transport transport, Route route) {
+        return transport.getPrice().multiply(route.getLength());
+    }
+
+    public static Predicate<Transport> isPriceInRange(Route route, BigDecimalRange range) {
+        return transport -> range
+                .isValueInRange(
+                        getDeliveryPrice(transport, route));
     }
 }

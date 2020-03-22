@@ -215,25 +215,43 @@ public class TestInversePathFinder {
 
     @Test
     public void testSortingDataByInfinityRange() {
-        testSort(BigDecimalRange.infinityRange(),
-                Arrays.asList(
-                        new Solution(CarsDelivery, Tanker, valueOf(250000)),
-                        new Solution(KingKongDelivery, Tanker, valueOf(250000)),
-                        new Solution(SmartphoneDelivery, Tanker, valueOf(250000)),
-                        new Solution(SmartphoneDelivery, Plane, valueOf(100000)),
-                        new Solution(ApplesDelivery, Plane, valueOf(35000)),
-                        new Solution(CarsDelivery, Train, valueOf(30000)),
-                        new Solution(BreadDelivery, Plane, valueOf(2500)),
-                        new Solution(ExpressLetterDelivery, SemiTrailerTruck, valueOf(2000)),
-                        new Solution(ApplesDelivery, SemiTrailerTruck, valueOf(2000)),
-                        new Solution(ExpressLetterDelivery, GAZelle, valueOf(1000)),
-                        new Solution(ExpressLetterDelivery, Plane, valueOf(1000)),
-                        new Solution(ExpressLetterDelivery, Train, valueOf(1000)),
-                        new Solution(BreadDelivery, Train, valueOf(700)),
-                        new Solution(BreadDelivery, SemiTrailerTruck, valueOf(200)),
-                        new Solution(BreadDelivery, GAZelle, valueOf(100))
-                )
+        List<Solution> expectedList = Arrays.asList(
+                new Solution(CarsDelivery, Tanker, valueOf(250000)),
+                new Solution(KingKongDelivery, Tanker, valueOf(250000)),
+                new Solution(SmartphoneDelivery, Tanker, valueOf(250000)),
+                new Solution(SmartphoneDelivery, Plane, valueOf(100000)),
+                new Solution(ApplesDelivery, Plane, valueOf(35000)),
+                new Solution(CarsDelivery, Train, valueOf(30000)),
+                new Solution(BreadDelivery, Plane, valueOf(2500)),
+                new Solution(ExpressLetterDelivery, SemiTrailerTruck, valueOf(2000)),
+                new Solution(ApplesDelivery, SemiTrailerTruck, valueOf(2000)),
+
+                new Solution(ExpressLetterDelivery, GAZelle, valueOf(1000)),
+                new Solution(ExpressLetterDelivery, Plane, valueOf(1000)),
+                new Solution(ExpressLetterDelivery, Train, valueOf(1000)),
+
+                new Solution(BreadDelivery, Train, valueOf(700)),
+                new Solution(BreadDelivery, SemiTrailerTruck, valueOf(200)),
+                new Solution(BreadDelivery, GAZelle, valueOf(100))
         );
+
+        InverseDeliveryTask inverseDeliveryTask =
+                new InverseDeliveryTask(getDeliveryTasks(), getAvailableTransport(), BigDecimalRange.infinityRange());
+
+        InversePathFinder inversePathFinder = getInversePathFinder();
+        List<Solution> actualList = inversePathFinder.getAllSolutions(inverseDeliveryTask);
+
+        List<Solution> expectedStart = expectedList.subList(0, 9);
+        List<Solution> actualStart = actualList.subList(0, 9);
+        testLists(actualStart, expectedStart, true);
+
+        List<Solution> expectedCenter = expectedList.subList(9, 12);
+        List<Solution> actualCenter = actualList.subList(9, 12);
+        testLists(actualCenter, expectedCenter, false);
+
+        List<Solution> expectedFinish = expectedList.subList(12, 14);
+        List<Solution> actualFinish = actualList.subList(12, 14);
+        testLists(actualFinish, expectedFinish, true);
     }
 
     @Test
@@ -260,17 +278,17 @@ public class TestInversePathFinder {
         test(new InverseDeliveryTask(getDeliveryTasks(), getAvailableTransport(), totalPriceRange), expected, false);
     }
 
-    private void testSort(BigDecimalRange totalPriceRange, List<Solution> expected) {
-        test(new InverseDeliveryTask(getDeliveryTasks(), getAvailableTransport(), totalPriceRange), expected, true);
-    }
-
     private void test(InverseDeliveryTask task, List<Solution> expectedSolutions, Boolean checkSort) {
         InversePathFinder inversePathFinder = getInversePathFinder();
-
         System.out.println(String.format("Total price range: %s",
                 Optional.ofNullable(task).map(InverseDeliveryTask::getPriceRange).orElse(null)));
 
         List<Solution> actualSolutions = inversePathFinder.getAllSolutions(task);
+
+        testLists(actualSolutions, expectedSolutions, checkSort);
+    }
+
+    private void testLists(List<Solution> actualSolutions, List<Solution> expectedSolutions, Boolean checkSort) {
         System.out.println("\nactual solutions:");
         actualSolutions.forEach(System.out::println);
 
