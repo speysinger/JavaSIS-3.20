@@ -28,13 +28,9 @@ class TemperatureServiceImplTest {
     void save() {
         String city = "Волгоград";
 
-        TemperatureRecord temperatureRecord = new TemperatureRecord();
         int temperature = temperatureService.getTemperature("city");
 
-        temperatureRecord.setCity(city);
-        temperatureRecord.setTemperature(temperature);
-        temperatureRecord.setTemperatureDate(LocalDate.now());
-
+        TemperatureRecord temperatureRecord = new TemperatureRecord(LocalDate.now(), city, temperature);
         TemperatureRecord sameRecord = temperatureService.save(temperatureRecord);
 
         assertEquals(temperatureRecord, sameRecord);
@@ -86,12 +82,9 @@ class TemperatureServiceImplTest {
     }
 
     private TemperatureRecord getTemperatureRecord(String city, LocalDate date) {
-        TemperatureRecord temperatureRecord = new TemperatureRecord();
+
         int temperature = temperatureService.getTemperature("city");
 
-        temperatureRecord.setCity(city);
-        temperatureRecord.setTemperature(temperature);
-        temperatureRecord.setTemperatureDate(date);
-        return temperatureRecord;
+        return new TemperatureRecord(date, city, temperature);
     }
 }

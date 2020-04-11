@@ -7,7 +7,6 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,53 +22,33 @@ public class WeatherShellCommands {
 
     @ShellMethod("Get weather")
     public String currentTemperature(
-            @ShellOption()
-                    String city) {
-        TemperatureRecord temperatureRecord = new TemperatureRecord();
-        Integer temperature = temperatureService.getTemperature(city);
+            @ShellOption() String city) {
+        TemperatureRecord temperatureRecord;
+        int temperature;
+        try {
+            temperature = temperatureService.getTemperature(city);
 
-        if (temperature != null) {
-            temperatureRecord.setCity(city);
-            temperatureRecord.setTemperature(temperature);
-            temperatureRecord.setTemperatureDate(LocalDate.now());
-            temperatureService.save(temperatureRecord);
-        } else {
-            return "Температура не получена";
+            temperatureRecord = getTemperatureRecord(city, temperature);
+            return String.valueOf(temperature);
+        } catch (RuntimeException e) {
+            return e.getMessage();
         }
-
-        return temperature.toString();
     }
 
     @ShellMethod("Get average temperature in city between two dates(yyyy-MM-dd)")
     public String getAverageTemperature(
-            @ShellOption()
-                    String city,
-            @ShellOption() String startDate,
-            @ShellOption() String endDate) {
-        final LocalDate startLocalDate;
-        final LocalDate endLocalDate;
-
-        List<TemperatureRecord> records;
+            @ShellOption(defaultValue = "") String city,
+            @ShellOption(defaultValue = "") String startDate,
+            @ShellOption(defaultValue = "") String endDate) {
 
         if (city.equals("")) {
             return "Введите город";
         } else {
-            startLocalDate = parseDate(startDate);
-            endLocalDate = parseDate(endDate);
-            if (startLocalDate == null & endLocalDate == null) {
-                return temperatureService.getTemperature(city).toString();
-            } else if (startLocalDate == null & endLocalDate != null) {
-                records = temperatureService.findAllBetweenDates(city, endLocalDate, endLocalDate);
-            } else {
-                records = temperatureService.findAllBetweenDates(city, startLocalDate, startLocalDate);
+            try {
+                return getAverageTemperatureBetweenDates(startDate, endDate, city);
+            } catch (RuntimeException e) {
+                return e.getMessage();
             }
-        }
-
-        if (records.size() == 0) {
-            return "Данные за этот период отсутствуют";
-        } else {
-            int averageTemp = records.stream().mapToInt(TemperatureRecord::getTemperature).sum();
-            return Integer.toString(averageTemp);
         }
     }
 
@@ -83,14 +62,50 @@ public class WeatherShellCommands {
                 .collect(Collectors.joining(System.lineSeparator()));
     }
 
-    private static LocalDate parseDate(String date) {
-        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private LocalDate parseDate(String date) {
+
         LocalDate localDate = null;
         try {
             localDate = LocalDate.parse(date);
         } catch (DateTimeParseException e) {
-            return null;
+            throw new RuntimeException("Некорректный формат даты");
         }
         return localDate;
+    }
+
+    private TemperatureRecord getTemperatureRecord(String city, int temperature) {
+
+        TemperatureRecord temperatureRecord = new TemperatureRecord(LocalDate.now(), city, temperature);
+        temperatureService.save(temperatureRecord);
+        return temperatureRecord;
+    }
+
+    private String getAverageTemperatureBetweenDates(String startDate, String endDate, String city) {
+
+        List<TemperatureRecord> records;
+
+        LocalDate startLocalDate;
+        LocalDate endLocalDate;
+
+        if (startDate.equals("") & endDate.equals("")) {
+            return String.valueOf(temperatureService.getTemperature(city));
+        } else if (startDate.equals("") & !endDate.equals("")) {
+            endLocalDate = parseDate(endDate);
+            startLocalDate = endLocalDate;
+        } else if (!startDate.equals("") & endDate.equals("")) {
+            startLocalDate = parseDate(startDate);
+            endLocalDate = startLocalDate;
+        } else {
+            startLocalDate = parseDate(startDate);
+            endLocalDate = parseDate(endDate);
+        }
+        records = temperatureService.findAllBetweenDates(city, endLocalDate, endLocalDate);
+
+        if (records.size() == 0) {
+            throw new RuntimeException("Данные за этот период отсутствуют");
+        } else {
+            int averageTemp = records.stream().mapToInt(TemperatureRecord::getTemperature).sum();
+            return String.valueOf(averageTemp);
+        }
     }
 }

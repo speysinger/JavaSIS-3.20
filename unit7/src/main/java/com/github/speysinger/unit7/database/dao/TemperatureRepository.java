@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface TemperatureDAO extends CrudRepository<TemperatureRecord, Long> {
+public interface TemperatureRepository extends CrudRepository<TemperatureRecord, Long> {
     public TemperatureRecord save(TemperatureRecord record);
 
     public List<TemperatureRecord> findAll();

@@ -26,6 +26,12 @@ public class TemperatureRecord {
     @Column(name = "Temperature", nullable = false)
     private int temperature;
 
+    public TemperatureRecord(LocalDate temperatureDate, String city, int temperature) {
+        this.temperatureDate = temperatureDate;
+        this.city = city;
+        this.temperature = temperature;
+    }
+
     @Override
     public boolean equals(Object temperatureRecord) {
         if (!(temperatureRecord instanceof TemperatureRecord)) {
