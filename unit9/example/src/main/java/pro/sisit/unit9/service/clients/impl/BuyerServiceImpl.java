@@ -3,16 +3,16 @@ package pro.sisit.unit9.service.clients.impl;
 import org.springframework.stereotype.Service;
 import pro.sisit.unit9.data.BuyerRepository;
 import pro.sisit.unit9.entity.Buyer;
-import pro.sisit.unit9.service.clients.BuyerHandler;
+import pro.sisit.unit9.service.clients.BuyerService;
 
 import java.util.Optional;
 
 @Service
-public class BuyerHandlerImpl implements BuyerHandler {
+public class BuyerServiceImpl implements BuyerService {
 
     private final BuyerRepository buyerRepository;
 
-    public BuyerHandlerImpl(BuyerRepository buyerRepository) {
+    public BuyerServiceImpl(BuyerRepository buyerRepository) {
         this.buyerRepository = buyerRepository;
     }
 
@@ -23,11 +23,9 @@ public class BuyerHandlerImpl implements BuyerHandler {
 
     @Override
     public Buyer getBuyer(String name, String address) {
-        Optional<Buyer> buyer = buyerRepository.findByNameAndAddress(name, address).stream().findFirst();
-        if (buyer.isPresent()) {
-            return buyer.get();
-        } else {
-            throw new RuntimeException("Покупатель не найден");
-        }
+        return buyerRepository.findByNameAndAddress(name, address).
+                stream().
+                findFirst().
+                orElseThrow(() -> new RuntimeException("Книга не найдена"));
     }
 }

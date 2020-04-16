@@ -6,6 +6,10 @@ import pro.sisit.unit9.entity.book.Book;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Интерфейс предназначается для создания функционала книжного магазина.
+ * Интерфейс скрывает сложную внутреннюю иерархию классов
+ */
 public interface BookShop {
     void buyBook(Buyer buyer, Book book, BigDecimal cost);
 

@@ -29,27 +29,4 @@ public class CashboxTerminalImpl implements CashboxTerminal {
         );
         boughtBookRepository.save(boughtBook);
     }
-
-    @Override
-    public BigDecimal bookProfit(Book book) {
-
-        List<BoughtBook> boughtBookList = boughtBookRepository.findAll();
-
-        return boughtBookList.
-                stream().
-                filter(boughtBook -> boughtBook.getBookId() == book.getId()).
-                map(BoughtBook::getCost).
-                reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    @Override
-    public BigDecimal profitByBuyer(Buyer buyer) {
-        List<BoughtBook> boughtBookList = boughtBookRepository.findAll();
-
-        return boughtBookList.
-                stream().
-                filter(boughtBook -> boughtBook.getBuyerId() == buyer.getId()).
-                map(BoughtBook::getCost).
-                reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
 }

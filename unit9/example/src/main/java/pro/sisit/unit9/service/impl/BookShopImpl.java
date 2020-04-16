@@ -4,8 +4,9 @@ import org.springframework.stereotype.Service;
 import pro.sisit.unit9.entity.Buyer;
 import pro.sisit.unit9.entity.book.Book;
 import pro.sisit.unit9.service.BookShop;
+import pro.sisit.unit9.service.analytics.Analyst;
 import pro.sisit.unit9.service.cashbox.CashboxTerminal;
-import pro.sisit.unit9.service.clients.BuyerHandler;
+import pro.sisit.unit9.service.clients.BuyerService;
 import pro.sisit.unit9.service.storehouse.StoreHouse;
 
 import java.math.BigDecimal;
@@ -15,14 +16,16 @@ import java.util.List;
 public class BookShopImpl implements BookShop {
 
     private final CashboxTerminal cashboxTerminal;
-    private final BuyerHandler buyerHandler;
+    private final BuyerService buyerService;
     private final StoreHouse storeHouse;
+    private final Analyst analyst;
 
 
-    public BookShopImpl(CashboxTerminal cashboxTerminal, BuyerHandler buyerHandler, StoreHouse storeHouse) {
+    public BookShopImpl(CashboxTerminal cashboxTerminal, BuyerService buyerService, StoreHouse storeHouse, Analyst analyst) {
         this.cashboxTerminal = cashboxTerminal;
-        this.buyerHandler = buyerHandler;
+        this.buyerService = buyerService;
         this.storeHouse = storeHouse;
+        this.analyst = analyst;
     }
 
     @Override
@@ -32,12 +35,12 @@ public class BookShopImpl implements BookShop {
 
     @Override
     public BigDecimal bookProfit(Book book) {
-        return cashboxTerminal.bookProfit(book);
+        return analyst.bookProfit(book);
     }
 
     @Override
     public BigDecimal profitByBuyer(Buyer buyer) {
-        return cashboxTerminal.profitByBuyer(buyer);
+        return analyst.profitByBuyer(buyer);
     }
 
     @Override
@@ -47,13 +50,13 @@ public class BookShopImpl implements BookShop {
 
     @Override
     public Buyer getBuyer(String name, String address) {
-        return buyerHandler.getBuyer(name, address);
+        return buyerService.getBuyer(name, address);
     }
 
 
     @Override
     public Buyer addBuyer(Buyer buyer) {
-        return buyerHandler.save(buyer);
+        return buyerService.save(buyer);
     }
 
     @Override

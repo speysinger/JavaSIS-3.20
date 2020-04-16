@@ -29,11 +29,9 @@ public class StoreHouseImpl implements StoreHouse {
 
     @Override
     public Book getBook(String title, Integer year) {
-        Optional<Book> book = bookRepository.findByTitleAndYear(title, year).stream().findFirst();
-        if (book.isPresent()) {
-            return book.get();
-        } else {
-            throw new RuntimeException("Книга не найдена");
-        }
+        return bookRepository.findByTitleAndYear(title, year).
+                stream().
+                findFirst().
+                orElseThrow(() -> new RuntimeException("Книга не найдена"));
     }
 }

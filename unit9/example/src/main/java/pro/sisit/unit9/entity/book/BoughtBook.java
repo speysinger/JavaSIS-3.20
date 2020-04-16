@@ -22,13 +22,15 @@ public class BoughtBook {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "buyer_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "buyer_id")
     private long buyerId;
 
     @Column(name = "cost")
     private BigDecimal cost;
 
-    @Column(name = "book_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id")
     private long bookId;
 
 }
