@@ -1,18 +1,22 @@
-package pro.sisit.unit9.entity;
+package pro.sisit.unit9.entity.book;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Data
-@Builder
+@Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Book {
+
+
+    public Book(String title, String description, Integer year) {
+        this.title = title;
+        this.description = description;
+        this.year = year;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
