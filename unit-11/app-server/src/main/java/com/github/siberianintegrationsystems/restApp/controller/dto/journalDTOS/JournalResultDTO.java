@@ -1,7 +1,10 @@
-package com.github.siberianintegrationsystems.restApp.controller.dto;
+package com.github.siberianintegrationsystems.restApp.controller.dto.journalDTOS;
+
+import lombok.Getter;
 
 import java.util.List;
 
+@Getter
 public class JournalResultDTO {
     public int total;
     public List<? extends JournalItemDTO> items;

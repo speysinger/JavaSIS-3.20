@@ -1,8 +1,14 @@
 package com.github.siberianintegrationsystems.restApp.entity;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
+@Setter
 public class Answer extends BaseEntity {
 
     @Column
@@ -15,27 +21,12 @@ public class Answer extends BaseEntity {
     @Column
     private Boolean isCorrect;
 
-    public String getName() {
-        return name;
+    public Answer() {
     }
 
-    public void setName(String name) {
+    public Answer(String name, Question question, Boolean isCorrect) {
         this.name = name;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(Question question) {
         this.question = question;
-    }
-
-    public Boolean getCorrect() {
-        return isCorrect;
-    }
-
-    public void setCorrect(Boolean correct) {
-        isCorrect = correct;
+        this.isCorrect = isCorrect;
     }
 }
