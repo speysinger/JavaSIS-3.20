@@ -5,7 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -18,13 +18,13 @@ public class Session extends BaseEntity {
     Double percent;
 
     @Column
-    Date date;
+    LocalDate date;
 
     public Session() {
 
     }
 
-    public Session(String name, Double percent, Date date) {
+    public Session(String name, Double percent, LocalDate date) {
         this.name = name;
         this.percent = percent;
         this.date = date;

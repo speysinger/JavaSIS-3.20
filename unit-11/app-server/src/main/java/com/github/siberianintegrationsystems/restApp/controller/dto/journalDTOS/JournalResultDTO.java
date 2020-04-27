@@ -6,10 +6,10 @@ import java.util.List;
 
 @Getter
 public class JournalResultDTO {
-    public int total;
+    public long total;
     public List<? extends JournalItemDTO> items;
 
-    public JournalResultDTO(int total, List<? extends JournalItemDTO> item) {
+    public JournalResultDTO(long total, List<? extends JournalItemDTO> item) {
         this.total = total;
         this.items = item;
     }

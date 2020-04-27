@@ -1,6 +1,5 @@
 package com.github.siberianintegrationsystems.restApp.service.journal;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import com.github.siberianintegrationsystems.restApp.controller.dto.journalDTOS.JournalFilterItem;
 import com.github.siberianintegrationsystems.restApp.controller.dto.journalDTOS.JournalItemDTO;
 import com.github.siberianintegrationsystems.restApp.controller.dto.journalDTOS.JournalRequestDTO;
@@ -14,16 +13,14 @@ import com.github.siberianintegrationsystems.restApp.data.SessionRepository;
 import com.github.siberianintegrationsystems.restApp.entity.BaseEntity;
 import com.github.siberianintegrationsystems.restApp.entity.Journal;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -82,23 +79,25 @@ public class JournalServiceImpl implements JournalService {
 
         PageRequest pageRequest = PageRequest.of((req.page - 1), req.pageSize);
 
+        Page<? extends JournalItemDTO> page;
         List<? extends JournalItemDTO> collection;
+        long elementsCount = 0;
+
         switch (id) {
             case QUESTIONS_JOURNAL_ID:
-                collection = getCollection(
+                page = getPage(
                         req.search,
+                        pageRequest,
                         questionRepository::findByNameContainingIgnoreCase,
                         q -> new QuestionsItemDTO(
                                 q,
-                                answerRepository.findByQuestion(q))).
-                        stream().
-                        filter(applyFilters(req.filters)).
-                        collect(Collectors.toList());
+                                answerRepository.findByQuestion(q)));
                 break;
 
             case SESSIONS_JOURNAL_ID:
-                collection = getCollection(
+                page = getPage(
                         req.search,
+                        pageRequest,
                         sessionRepository::findByNameContainingIgnoreCase,
                         s -> new SessionItemDTO(s.getName(),
                                 s.getDate(),
@@ -108,31 +107,18 @@ public class JournalServiceImpl implements JournalService {
             default:
                 throw new RuntimeException();
         }
-        int itemsCount = collection.size();
+        elementsCount = page.getTotalElements();
+        collection = page.getContent();
 
-        return new JournalResultDTO(itemsCount, getPageInsides(pageRequest, collection));
+        return new JournalResultDTO(elementsCount, collection);
     }
 
-    private <T extends BaseEntity, U extends JournalItemDTO> List<U> getCollection(
+    private <T extends BaseEntity, U extends JournalItemDTO> Page<U> getPage(
             String search,
-            Function<String, List<T>> finder,
+            PageRequest pageRequest,
+            BiFunction<String, PageRequest, Page<T>> finder,
             Function<T, U> mapper
     ) {
-        return finder.apply(search)
-                .stream()
-                .map(mapper)
-                .collect(Collectors.toList());
+        return finder.apply(search, pageRequest).map(mapper);
     }
-
-    private <U extends JournalItemDTO> List<U> getPageInsides(
-            Pageable pageRequest,
-            List<U> items
-    ) {
-        long start = pageRequest.getOffset();
-        long end = (start + pageRequest.getPageSize()) > items.size() ? items.size() : (start + pageRequest.getPageSize());
-
-        Page<U> page = new PageImpl<>(items.subList((int) start, (int) end), pageRequest, items.size());
-        return page.getContent();
-    }
-
 }

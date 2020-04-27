@@ -6,18 +6,18 @@ import com.github.siberianintegrationsystems.restApp.controller.dto.sessionDTOS.
 import com.github.siberianintegrationsystems.restApp.controller.dto.sessionDTOS.SessionResultDTO;
 import com.github.siberianintegrationsystems.restApp.data.AnswerRepository;
 import com.github.siberianintegrationsystems.restApp.data.QuestionRepository;
-import com.github.siberianintegrationsystems.restApp.data.Selected_AnswerRepository;
+import com.github.siberianintegrationsystems.restApp.data.SelectedAnswerRepository;
 import com.github.siberianintegrationsystems.restApp.data.SessionRepository;
 import com.github.siberianintegrationsystems.restApp.entity.Answer;
 import com.github.siberianintegrationsystems.restApp.entity.Question;
-import com.github.siberianintegrationsystems.restApp.entity.Selected_Answer;
+import com.github.siberianintegrationsystems.restApp.entity.SelectedAnswer;
 import com.github.siberianintegrationsystems.restApp.entity.Session;
 import com.github.siberianintegrationsystems.restApp.service.journal.session.SessionService;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,16 +27,20 @@ public class SessionServiceImpl implements SessionService {
 
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
-    private final Selected_AnswerRepository selected_answerRepository;
+    private final SelectedAnswerRepository selected_answerRepository;
     private final SessionRepository sessionRepository;
 
-    public SessionServiceImpl(QuestionRepository questionRepository, AnswerRepository answerRepository, Selected_AnswerRepository selected_answerRepository, SessionRepository sessionRepository) {
+    public SessionServiceImpl(QuestionRepository questionRepository, AnswerRepository answerRepository, SelectedAnswerRepository selected_answerRepository, SessionRepository sessionRepository) {
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
         this.selected_answerRepository = selected_answerRepository;
         this.sessionRepository = sessionRepository;
     }
 
+    /*
+    Реализован рандомный выбор половины от существующих вопросов в случае если вопросов более чем 1,
+    иначе передать то, что есть
+     */
     @Override
     public List<QuestionsItemDTO> getQuestions() {
 
@@ -63,10 +67,11 @@ public class SessionServiceImpl implements SessionService {
 
         List<AnsweredQuestionDTO> answeredQuestionDTOS = dto.getQuestionsList();
 
-        return (answeredQuestionDTOS.
-                stream().
-                mapToDouble(this::getQuestionsPercent).
-                sum() / answeredQuestionDTOS.size()) * 100;
+        return answeredQuestionDTOS.isEmpty() ? 0 :
+                (answeredQuestionDTOS.
+                        stream().
+                        mapToDouble(this::getQuestionsPercent).
+                        sum() / answeredQuestionDTOS.size()) * 100;
     }
 
     @Override
@@ -89,17 +94,16 @@ public class SessionServiceImpl implements SessionService {
         correctAnswersCount = correctQuestionAnswers.size();
 
         for (SessionQuestionAnswer answer : dto.answersList) {
-            if (answer.isSelected() && contain(answer.getId(), correctQuestionAnswers)) {
+            if (answer.isSelected() && contain(String.valueOf(answer.getId()), correctQuestionAnswers)) {
                 userCorrectAnswersCount++;
-            } else if (answer.isSelected() && !contain(answer.getId(), correctQuestionAnswers)) {
+            } else if (answer.isSelected() && !contain(String.valueOf(answer.getId()), correctQuestionAnswers)) {
                 userWrongAnswersCount++;
             }
         }
 
-        if (correctAnswersCount == 1 && userWrongAnswersCount == 0) {
-            return 1;
-        } else if (correctAnswersCount == 1 && userWrongAnswersCount != 0) {
-            return 0;
+        //*а если правильных один, неправильных пользователя 0 но и правильных пользователя 0*/
+        if (correctAnswersCount == 1) {
+            return (userWrongAnswersCount == 0 && userCorrectAnswersCount == 1) ? 1 : 0;
         } else {
             return Math.max(0, userCorrectAnswersCount / correctAnswersCount -
                     userWrongAnswersCount /
@@ -109,7 +113,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public Session saveSessionInfo(SessionResultDTO dto, double percent) {
-        Session session = new Session(dto.getName(), percent, new Date());
+        Session session = new Session(dto.getName(), percent, LocalDate.now());
         session = sessionRepository.save(session);
 
         saveSelectedAnswers(session, dto.getQuestionsList());
@@ -128,9 +132,9 @@ public class SessionServiceImpl implements SessionService {
 
                 if (sessionQuestionAnswer.isSelected()) {
                     Answer answer = new Answer();
-                    answer.setId(Long.parseLong(sessionQuestionAnswer.getId()));
+                    answer.setId(sessionQuestionAnswer.getId());
 
-                    Selected_Answer selected_answer = new Selected_Answer(answer, session);
+                    SelectedAnswer selected_answer = new SelectedAnswer(answer, session);
                     selected_answerRepository.save(selected_answer);
                 }
             }

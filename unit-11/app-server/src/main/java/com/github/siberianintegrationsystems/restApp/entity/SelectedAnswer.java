@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
 @Entity
 @Getter
 @Setter
-public class Selected_Answer extends BaseEntity {
+public class SelectedAnswer extends BaseEntity {
 
     @JoinColumn(name = "answer_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -21,7 +21,7 @@ public class Selected_Answer extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Session session;
 
-    public Selected_Answer(Answer answer, Session session) {
+    public SelectedAnswer(Answer answer, Session session) {
         this.answer = answer;
         this.session = session;
     }

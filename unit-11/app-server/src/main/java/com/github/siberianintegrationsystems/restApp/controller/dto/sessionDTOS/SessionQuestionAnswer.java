@@ -6,10 +6,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SessionQuestionAnswer {
-    String id;
+    long id;
     boolean isSelected;
 
-    public SessionQuestionAnswer(String id, boolean isSelected)
+    public SessionQuestionAnswer(long id, boolean isSelected)
     {
         this.id = id;
         this.isSelected = isSelected;

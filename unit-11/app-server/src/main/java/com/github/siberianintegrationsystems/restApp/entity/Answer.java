@@ -1,6 +1,5 @@
 package com.github.siberianintegrationsystems.restApp.entity;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.Getter;
 import lombok.Setter;
 
