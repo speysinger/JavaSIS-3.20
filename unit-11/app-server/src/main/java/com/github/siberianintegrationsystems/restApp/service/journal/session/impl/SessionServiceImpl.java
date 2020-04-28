@@ -101,9 +101,10 @@ public class SessionServiceImpl implements SessionService {
             }
         }
 
-        //*а если правильных один, неправильных пользователя 0 но и правильных пользователя 0*/
         if (correctAnswersCount == 1) {
             return (userWrongAnswersCount == 0 && userCorrectAnswersCount == 1) ? 1 : 0;
+        } else if (correctAnswersCount == userCorrectAnswersCount) {
+            return 1;
         } else {
             return Math.max(0, userCorrectAnswersCount / correctAnswersCount -
                     userWrongAnswersCount /
