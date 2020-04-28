@@ -94,16 +94,21 @@ public class SessionServiceImpl implements SessionService {
         correctAnswersCount = correctQuestionAnswers.size();
 
         for (SessionQuestionAnswer answer : dto.answersList) {
-            if (answer.isSelected() && contain(String.valueOf(answer.getId()), correctQuestionAnswers)) {
-                userCorrectAnswersCount++;
-            } else if (answer.isSelected() && !contain(String.valueOf(answer.getId()), correctQuestionAnswers)) {
-                userWrongAnswersCount++;
+            //если ответ считается правильным
+            if (contain(String.valueOf(answer.getId()), correctQuestionAnswers)) {
+                if (answer.isSelected()) {
+                    userCorrectAnswersCount++;
+                } else {
+                    userWrongAnswersCount++;
+                }
+            } else {
+                if (answer.isSelected()) {
+                    userWrongAnswersCount++;
+                }
             }
         }
 
-        if (correctAnswersCount == 1) {
-            return (userWrongAnswersCount == 0 && userCorrectAnswersCount == 1) ? 1 : 0;
-        } else if (correctAnswersCount == userCorrectAnswersCount) {
+        if (userWrongAnswersCount == 0) {
             return 1;
         } else {
             return Math.max(0, userCorrectAnswersCount / correctAnswersCount -
