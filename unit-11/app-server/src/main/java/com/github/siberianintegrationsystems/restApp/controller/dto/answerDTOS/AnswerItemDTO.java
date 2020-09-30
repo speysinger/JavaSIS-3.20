@@ -1,4 +1,4 @@
-package com.github.siberianintegrationsystems.restApp.controller.dto;
+package com.github.siberianintegrationsystems.restApp.controller.dto.answerDTOS;
 
 import com.github.siberianintegrationsystems.restApp.entity.Answer;
 
@@ -14,6 +14,6 @@ public class AnswerItemDTO {
     public AnswerItemDTO(Answer answer) {
         id = answer.getId().toString();
         answerText = answer.getName();
-        isCorrect = answer.getCorrect();
+        isCorrect = answer.getIsCorrect();
     }
 }

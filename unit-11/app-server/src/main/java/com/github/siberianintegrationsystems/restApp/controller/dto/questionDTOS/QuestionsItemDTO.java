@@ -1,5 +1,7 @@
-package com.github.siberianintegrationsystems.restApp.controller.dto;
+package com.github.siberianintegrationsystems.restApp.controller.dto.questionDTOS;
 
+import com.github.siberianintegrationsystems.restApp.controller.dto.answerDTOS.AnswerItemDTO;
+import com.github.siberianintegrationsystems.restApp.controller.dto.journalDTOS.JournalItemDTO;
 import com.github.siberianintegrationsystems.restApp.entity.Answer;
 import com.github.siberianintegrationsystems.restApp.entity.Question;
 

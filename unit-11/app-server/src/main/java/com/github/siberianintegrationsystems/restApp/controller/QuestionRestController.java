@@ -1,7 +1,7 @@
 package com.github.siberianintegrationsystems.restApp.controller;
 
-import com.github.siberianintegrationsystems.restApp.controller.dto.QuestionsItemDTO;
-import com.github.siberianintegrationsystems.restApp.service.QuestionService;
+import com.github.siberianintegrationsystems.restApp.controller.dto.questionDTOS.QuestionsItemDTO;
+import com.github.siberianintegrationsystems.restApp.service.journal.question.QuestionService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,5 +18,11 @@ public class QuestionRestController {
     @PostMapping("create")
     public QuestionsItemDTO create(@RequestBody QuestionsItemDTO dto) {
         return questionService.createQuestion(dto);
+    }
+
+    @PutMapping("edit")
+    public void edit(@RequestBody QuestionsItemDTO dto)
+    {
+        questionService.editQuestion(dto);
     }
 }
